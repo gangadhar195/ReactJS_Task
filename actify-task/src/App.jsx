@@ -17,7 +17,7 @@ const App = () => {
     (state) => state.user
   );
   const usersPerPage = 10;
-  // const api = "https://dummyjson.com/users";
+
   const {
     register,
     handleSubmit,
@@ -28,11 +28,7 @@ const App = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // const response = await axios.get(api);
-        // const data = response.data.users;
         const data = dummyData;
-        console.log(data);
-        
         dispatch(setUsers(data));
       } catch (error) {
         console.error("Error:", error);
@@ -96,182 +92,59 @@ const App = () => {
     dispatch(setUsers([...users, { id: users.length + 1, ...data }]));
     reset();
   };
+
   return (
-    <div>
-      <div>
-        <div className="p-4 max-w-full overflow-x-auto">
-          <h1 className="mb-4 bg-slate-500 text-white p-2 text-center font-bold text-2xl">
-            User Details
-          </h1>
-
-          {/* User Form */}
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="mb-4 p-4 border rounded"
-          >
-            <div className="grid grid-cols-2 gap-4">
-              <input
-                {...register("firstName", {
-                  required: "First Name is required",
-                })}
-                placeholder="First Name"
-                className="p-2 border rounded"
-              />
-              {errors.firstName && (
-                <span className="text-red-500">{errors.firstName.message}</span>
-              )}
-
-              <input
-                {...register("lastName", { required: "Last Name is required" })}
-                placeholder="Last Name"
-                className="p-2 border rounded"
-              />
-              {errors.lastName && (
-                <span className="text-red-500">{errors.lastName.message}</span>
-              )}
-
-              <input
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[^@]+@[^@]+\.[^@]+$/,
-                    message: "Invalid email",
-                  },
-                })}
-                placeholder="Email"
-                className="p-2 border rounded"
-              />
-              {errors.email && (
-                <span className="text-red-500">{errors.email.message}</span>
-              )}
-
-              <select
-                {...register("gender", { required: "Gender is required" })}
-                className="p-2 border rounded"
-              >
-                <option value="">Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-              </select>
-              {errors.gender && (
-                <span className="text-red-500">{errors.gender.message}</span>
-              )}
-
-              <input
-                {...register("age", {
-                  required: "Age is required",
-                  min: { value: 1, message: "Age must be positive" },
-                })}
-                placeholder="Age"
-                type="number"
-                className="p-2 border rounded"
-              />
-              {errors.age && (
-                <span className="text-red-500">{errors.age.message}</span>
-              )}
-
-              <input
-                {...register("city", { required: "City is required" })}
-                placeholder="City"
-                className="p-2 border rounded"
-              />
-              {errors.city && (
-                <span className="text-red-500">
-                  {errors.city.message}
-                </span>
-              )}
-            </div>
-
-            <button
-              type="submit"
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-            >
-              Submit
-            </button>
-          </form>
+    <div className="p-4 max-w-7xl mx-auto">
+      <h1 className="mb-4 bg-slate-500 text-white p-4 text-center font-bold text-2xl rounded-md">
+        User Details
+      </h1>
+      
+      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 p-4 border rounded-md bg-white shadow-md">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input {...register("firstName", { required: "First Name is required" })} placeholder="First Name" className="p-2 border rounded w-full" />
+          <input {...register("lastName", { required: "Last Name is required" })} placeholder="Last Name" className="p-2 border rounded w-full" />
+          <input {...register("email", { required: "Email is required" })} placeholder="Email" className="p-2 border rounded w-full" />
+          <select {...register("gender", { required: "Gender is required" })} className="p-2 border rounded w-full">
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+          <input {...register("age", { required: "Age is required" })} placeholder="Age" type="number" className="p-2 border rounded w-full" />
+          <input {...register("city", { required: "City is required" })} placeholder="City" className="p-2 border rounded w-full" />
         </div>
-      </div>
-      <input
-        type="text"
-        placeholder="Search..."
-        value={searchTerm}
-        onChange={(e) => dispatch(setSearchTerm(e.target.value))}
-        className="p-2 border border-gray-300 rounded mb-4 w-full"
-      />
-
-      <button
-        onClick={exportToExcel}
-        className="mb-4 px-4 py-2 bg-green-500 text-white rounded"
-      >
-        Download Excel
-      </button>
-      <table className="border-2 border-separate border border-slate-400 w-full text-sm md:text-base">
-        <thead>
-          <tr>
-            <th
-              className="border border-slate-300 p-2"
-              onClick={() => requestSort("id")}
-            >
-              ID
-            </th>
-            <th
-              className="border border-slate-300 p-2"
-              onClick={() => requestSort("firstName")}
-            >
-              Name
-            </th>
-            <th
-              className="border border-slate-300 p-2"
-              onClick={() => requestSort("email")}
-            >
-              Email
-            </th>
-            <th
-              className="border border-slate-300 p-2"
-              onClick={() => requestSort("gender")}
-            >
-              Gender
-            </th>
-            <th
-              className="border border-slate-300 p-2"
-              onClick={() => requestSort("age")}
-            >
-              Age
-            </th>
-            <th
-              className="border border-slate-300 p-2"
-              onClick={() => requestSort("city")}
-            >
-              City
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentUsers.map((data) => (
-            <tr key={data.id}>
-              <td className="border border-slate-300 p-2 text-center">
-                {data.id}
-              </td>
-              <td className="border border-slate-300 p-2 text-center">
-                {data.firstName} {data.lastName}
-              </td>
-              <td className="border border-slate-300 p-2 text-center">
-                {data.email}
-              </td>
-              <td className="border border-slate-300 p-2 text-center">
-                {data.gender}
-              </td>
-              <td className="border border-slate-300 p-2 text-center">
-                {data.age}
-              </td>
-              <td className="border border-slate-300 p-2 text-center">
-                {data.city}
-              </td>
+        <button type="submit" className="mt-2 px-4 py-2 bg-blue-500 text-white rounded w-full">Submit</button>
+      </form>
+      
+      <input type="text" placeholder="Search..." value={searchTerm} onChange={(e) => dispatch(setSearchTerm(e.target.value))} className="p-2 border rounded w-full mt-4" />
+      
+      <button onClick={exportToExcel} className="mt-2 px-4 py-2 bg-green-500 text-white rounded">Download Excel</button>
+      
+      <div className="overflow-x-auto mt-4">
+        <table className="w-full border text-left text-sm md:text-base">
+          <thead>
+            <tr>
+              <th onClick={() => requestSort("id")} className="p-2 border cursor-pointer">ID</th>
+              <th onClick={() => requestSort("firstName")} className="p-2 border cursor-pointer">Name</th>
+              <th onClick={() => requestSort("email")} className="p-2 border cursor-pointer">Email</th>
+              <th onClick={() => requestSort("gender")} className="p-2 border cursor-pointer">Gender</th>
+              <th onClick={() => requestSort("age")} className="p-2 border cursor-pointer">Age</th>
+              <th onClick={() => requestSort("city")} className="p-2 border cursor-pointer">City</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="mt-4 flex justify-center items-center gap-4">
+          </thead>
+          <tbody>
+            {currentUsers.map((data) => (
+              <tr key={data.id} className="text-center">
+                <td className="p-2 border">{data.id}</td>
+                <td className="p-2 border">{data.firstName} {data.lastName}</td>
+                <td className="p-2 border">{data.email}</td>
+                <td className="p-2 border">{data.gender}</td>
+                <td className="p-2 border">{data.age}</td>
+                <td className="p-2 border">{data.city}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="mt-4 flex justify-center items-center gap-4">
         <button
           onClick={prevPage}
           disabled={currentPage === 1}
@@ -292,6 +165,7 @@ const App = () => {
         >
           Next
         </button>
+      </div>
       </div>
     </div>
   );
